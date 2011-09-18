@@ -12,6 +12,7 @@ let file_template f =
   | None -> raise_lwt (Failure (sprintf "File template not found: %s" f))
 
 let read_file f =
+  try_lwt
   let suffix =
     try let n = String.rindex f '.' in
         String.sub f (n+1) (String.length f - n - 1)
@@ -20,6 +21,9 @@ let read_file f =
     | "md"   -> file_template f >|= Markdown.of_string >|= Markdown.to_html 
     | "html" -> file_template f >|= Html.of_string
     | _      -> return []
+  with exn ->
+    Printf.printf "EXN in read_file %s : %s\n%!" f (Printexc.to_string exn);
+    exit 1
 
 let col_files l r = <:html< 
   <div class="left_column">
@@ -66,8 +70,8 @@ module Resources = struct
 end 
 
 module About = struct
-  let body = read_file "/about.md" >|= (fun l -> col_files l none)
-  let t = Template.t "About" "about" body >|= Html.to_string
+  let body = read_file "/about.html"
+  let t = Template.t "About" "about" body >|= (fun x -> Printf.printf "XXXXXXXXXXXXX\n%!"; Html.to_string x)
 end
 
 module Blog = struct

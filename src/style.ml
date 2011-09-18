@@ -140,7 +140,6 @@ let content = <:css<
 
   $Pages.column_css$;
   $Blog.entries_css$
-  $Wiki.page_css$;
 >>
 
 let wrapper = <:css<

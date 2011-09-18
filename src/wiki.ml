@@ -21,7 +21,7 @@ type date = {
   year  : int;
   hour  : int;
   min   : int;
-} with html
+}
 
 let date (year, month, day, hour, min) =
   { month; day; year; hour; min }
@@ -30,7 +30,7 @@ let atom_date d =
   ( d.year, d.month, d.day, d.hour, d.min)
 
 let short_html_of_date d =
-  <:html<last modified on $int:d.day$ $html_of_month d.month$ $int:d.year$>>
+  <:html<on $int:d.day$ $html_of_month d.month$ $int:d.year$>>
 
 (* Entry *)
 
@@ -66,18 +66,17 @@ let html_of_entry ?(want_date=true) read_file e =
   let permalink = sprintf "%s/wiki/%s" Config.baseurl e.permalink in
   lwt body = body_of_entry read_file e in
   return <:html<
-    <div class="wiki_entry">
-      $if want_date then html_of_date e.updated else []$
-      <div class="wiki_entry_heading">
-        <div class="wiki_entry_title">
+      <h2>
           <a href=$str:permalink$>$str:e.subject$</a>
-        </div>
-        <div class="wiki_entry_info">
-          <i>$html_of_author e.author$</i>
-        </div>
-     </div>
-     <div class="wiki_entry_body">$body$</div>
-   </div>
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          <small>
+          $html_of_author e.author$
+          $if want_date then short_html_of_date e.updated else []$
+          </small>
+      </h2>
+     $body$
  >>
 
 let html_of_index read_file =
@@ -194,21 +193,6 @@ let short_html_of_categories entries categories =
     </div>
  >>
 
-let short_categories_css = <:css<
-  .wiki_bar {
-    text-align: right;
-    border-right: 1px solid #eee;
-    padding-right: 2px;
-
-    .wiki_bar_l0 {
-      font-size: 1.4em;
-      padding-right: 5px;
-    }
-
-    $short_category_css$
-  }
->>
-
 (* Index pages *)
 
 let permalink e =
@@ -227,10 +211,8 @@ let html_of_category entries (l1, l2) =
   | []      -> []
   | entries ->
       <:html<
-        <div class="category_index">
           <h3>$str:l1$ $str:l2_str$</h3>
           <ul>$list:List.map aux entries$</ul>
-        </div>
       >>
 
 let html_of_categories entries categories =
@@ -260,10 +242,9 @@ let html_of_recent_updates entries =
     <br />
   >> in
   <:html<
-    <div class="wiki_updates">
-    <p><b>Recently Updated</b><br />
-    $list:List.map html_of_ent ents$
-    </p>
+    <div class="row">
+    <h3>Recently Updated</h3>
+    <p>$list:List.map html_of_ent ents$</p>
     </div>
   >>
 
@@ -291,28 +272,15 @@ let html_of_page ?disqus ~left_column ~right_column =
 
   lwt left_column = left_column in
   return <:html<
-    <div class="left_column_wiki">
-      <div class="summary_information">$left_column$</div>
+    <div class="container-fluid">
+      <div class="sidebar">$right_column$</div>
+      <div class="content">
+        $left_column$
+        <h2>Comments</h2>
+        $dh$
+      </div>
     </div>
-    <div class="right_column_wiki">$right_column$</div>
-    <div style="clear:both;"></div>
-    <h2>Comments</h2>
-    $dh$
   >>
-
-let page_css = <:css<
-  .left_column_wiki {
-    float: left;
-    width: 840px;
-    $entry_css$;
-    $category_css$;
-  }
-  .right_column_wiki {
-    float: right;
-    width: 100px;
-    $short_categories_css$;
-  }
->>
 
 (* Data *)
 

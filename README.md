@@ -1,3 +1,8 @@
+## Initial Setup of WIKI
+
+- [ ] looking into client side certificates for most secure authentication of users
+  - [ ] Really??? cf. [[LadderLeak-paper](https://eprint.iacr.org/2020/615.pdf)]
+
 ## MirageOS Website
 
 [![Build Status](https://travis-ci.org/mirage/mirage-www.svg?branch=master)](https://travis-ci.org/mirage/mirage-www)

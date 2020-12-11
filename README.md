@@ -2,6 +2,7 @@
 
 - [ ] looking into client side certificates for most secure authentication of users
   - [ ] Really??? cf. [[LadderLeak-paper](https://eprint.iacr.org/2020/615.pdf)]
+- a praise of the ugly, a praise of impartial beauty...
 
 ## MirageOS Website
 
